@@ -1,18 +1,23 @@
-const axios = require('axios');
+const { Configuration, OpenAIApi } = require("openai");
 require('dotenv').config();
-const apiKey = process.env.OPENAI_API_KEY;
-const client = axios.create({
-    headers: { 'Authorization': 'Bearer ' + apiKey }
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
-const params = {
-    "documents": ["plane", "boat", "spaceship", "car"],
-    "query": "A vehicle with wheels"
+const openai = new OpenAIApi(configuration);
+
+async function asyncCall() {
+    const response = await openai.createChatCompletion({
+        "model": "gpt-3.5-turbo",
+        "messages": [{ "role": "user", "content": "What can you do?" }]
+    });
+    console.log(response.data.choices[0].message);
 }
 
-client.post('https://api.openai.com/v1/engines/davinci/search', params)
-    .then(result => {
-        console.log(result.data);
-    }).catch(err => {
-        console.log(err);
-    });
+asyncCall();
+
+
+
+
+
+module.exports = { openai };
